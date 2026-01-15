@@ -3,4 +3,5 @@ __all__ = [
 	"ButtonListWidget",
 	"DroppableImageWidget",
 	"DroppableList",
+	"Titlebar"
 ]
