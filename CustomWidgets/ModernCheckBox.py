@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QCheckBox
 from PySide6.QtCore import Qt, QEasingCurve, QPropertyAnimation, Property, QRect, QPoint
-from PySide6.QtGui import QPainter, QColor, QColorConstants 
+from PySide6.QtGui import QPainter, QColor 
 
 class ModernCheckBox(QCheckBox):
     def __init__(self, parent=None, *args , animation_curve = QEasingCurve.Type.OutQuint, **kwargs) :	#OutBounce

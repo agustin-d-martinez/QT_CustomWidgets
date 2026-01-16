@@ -1,5 +1,5 @@
-from PySide6.QtWidgets import *
-from PySide6.QtCore import *
+from PySide6.QtWidgets import QPushButton
+from PySide6.QtCore import QPropertyAnimation, QEasingCurve, QMargins
 
 class AnimatedButton(QPushButton):
 	def __init__(self, *args , **kwargs):

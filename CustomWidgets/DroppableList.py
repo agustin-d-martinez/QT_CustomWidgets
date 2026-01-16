@@ -1,6 +1,6 @@
-from PySide6.QtWidgets import *
-from PySide6.QtCore import *
-from PySide6.QtGui import *
+from PySide6.QtWidgets import QListWidget, QMenu, QAbstractItemView, QFileDialog
+from PySide6.QtCore import QPoint, QFileInfo
+from PySide6.QtGui import Qt, QKeyEvent, QDragEnterEvent, QDragMoveEvent, QDropEvent
 
 class DroppableList(QListWidget):
     """
