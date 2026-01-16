@@ -16,7 +16,54 @@ class TitleBar(QWidget):
         self.setObjectName("TitleBar")
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
 
-        # size Policy
+        self._setup_ui()
+        
+
+        # Dragging
+        self._normal_geometry = QRect()
+        self.drag_helper = QTDragHelper()
+        self._restore_ratio: float = 0.0
+        self._drag_start_pos: QPoint | None = None
+
+        # Context Menu
+        self._context_menu = QMenu(self)
+        style = QApplication.style()
+
+        context_menu_restore = QAction(style.standardIcon(QStyle.StandardPixmap.SP_TitleBarNormalButton), "Restaurar", self)
+        context_menu_restore.triggered.connect(lambda: self.maximize_window(False))		
+        context_menu_restore.setDisabled(True)
+
+        context_menu_minimize = QAction(style.standardIcon(QStyle.StandardPixmap.SP_TitleBarMinButton), "Minimizar", self)
+        context_menu_minimize.triggered.connect(self.minimize_window)	
+
+        context_menu_maximize = QAction(style.standardIcon(QStyle.StandardPixmap.SP_TitleBarMaxButton), "Maximizar", self)
+        context_menu_maximize.triggered.connect(lambda: self.maximize_window(True))		
+
+        context_menu_close = QAction(style.standardIcon(QStyle.StandardPixmap.SP_TitleBarCloseButton), "Cerrar", self)
+        context_menu_close.setShortcut(QKeySequence("ALT+F4"))
+        context_menu_close.triggered.connect(self.close_window)
+        
+        self._context_menu.addAction(context_menu_restore)
+        self._context_menu.addAction(context_menu_minimize)
+        self._context_menu.addAction(context_menu_maximize)
+        self._context_menu.addSeparator()
+        self._context_menu.addAction(context_menu_close)
+
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.exec_context_menu)
+
+        # Visual Overlay
+        self._overlay = SnapOverlay(self.window().screen())
+        self._snap_target: SnapTarget = SnapTarget.NONE
+ 
+        # Connects
+        self.maximizeButton.clicked.connect(self.maximize_window)
+        self.exitButton.clicked.connect(self.close_window)
+        self.minimizeButton.clicked.connect(self.minimize_window)
+
+        QMetaObject.connectSlotsByName(self)
+
+    def _setup_ui(self):
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -74,50 +121,6 @@ class TitleBar(QWidget):
         horizontalLayout.addWidget(self.maximizeButton)
         horizontalLayout.addWidget(self.exitButton)
         horizontalLayout.setContentsMargins(0,0,0,0)
-
-        # Dragging
-        self._normal_geometry = QRect()
-        self.drag_helper = QTDragHelper()
-        self._restore_ratio: float = 0.0
-        self._drag_start_pos: QPoint | None = None
-
-        # Context Menu
-        self._context_menu = QMenu(self)
-        style = QApplication.style()
-
-        context_menu_restore = QAction(style.standardIcon(QStyle.StandardPixmap.SP_TitleBarNormalButton), "Restaurar", self)
-        context_menu_restore.triggered.connect(lambda: self.maximize_window(False))		
-        context_menu_restore.setDisabled(True)
-
-        context_menu_minimize = QAction(style.standardIcon(QStyle.StandardPixmap.SP_TitleBarMinButton), "Minimizar", self)
-        context_menu_minimize.triggered.connect(self.minimize_window)	
-
-        context_menu_maximize = QAction(style.standardIcon(QStyle.StandardPixmap.SP_TitleBarMaxButton), "Maximizar", self)
-        context_menu_maximize.triggered.connect(lambda: self.maximize_window(True))		
-
-        context_menu_close = QAction(style.standardIcon(QStyle.StandardPixmap.SP_TitleBarCloseButton), "Cerrar", self)
-        context_menu_close.setShortcut(QKeySequence("ALT+F4"))
-        context_menu_close.triggered.connect(self.close_window)
-        
-        self._context_menu.addAction(context_menu_restore)
-        self._context_menu.addAction(context_menu_minimize)
-        self._context_menu.addAction(context_menu_maximize)
-        self._context_menu.addSeparator()
-        self._context_menu.addAction(context_menu_close)
-
-        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.customContextMenuRequested.connect(self.exec_context_menu)
-
-        # Visual Overlay
-        self._overlay = SnapOverlay(self.window().screen())
-        self._snap_target: SnapTarget = SnapTarget.NONE
- 
-        # Connects
-        self.maximizeButton.clicked.connect(self.maximize_window)
-        self.exitButton.clicked.connect(self.close_window)
-        self.minimizeButton.clicked.connect(self.minimize_window)
-
-        QMetaObject.connectSlotsByName(self)
 
 # =====================================================
 # QT Events

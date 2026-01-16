@@ -2,22 +2,29 @@ from PySide6.QtWidgets import *
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 import sys
-
-import os, sys
+import os
 
 from CustomWidgets.TitleBar import TitleBar
+from CustomWidgets.FramelessWindow import FramelessWindow
 # Important:
 # You need to run the following command to generate the ui_form.py file:
 #     pyside6-rcc .\Icons\resources.qrc -o .\Icons\resources.py
 # pyside6-designer
 # from Icons import resources
-class Application(QMainWindow):
+
+class Application(FramelessWindow):
     def __init__(self, parent= None ):
         super().__init__(parent)
-        self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
 
         self.titlebar = TitleBar(self)
         self.titlebar.setFixedHeight(50)
+        self.titlebar.setStyleSheet(
+            """#TitleBar { color: white; }\n
+            QWidget{ background-color: #000000;}\n
+            QPushButton{ background-color: grey;}\n
+            QLabel{color: white;}\n 
+            QAction{color: white;}"""
+        )
         self.button1 = QPushButton("Uno", self)
         self.button2 = QPushButton("Dos", self)
         self.button3 = QPushButton("Tres", self)
@@ -33,16 +40,6 @@ class Application(QMainWindow):
         central.setLayout(layout)
         
         self.setCentralWidget(central)
-        self.grip = QSizeGrip(self)
-        self.grip.resize(10, 10)
-
-    def resizeEvent(self, event):
-        self.grip.move(
-            self.width() - self.grip.width(),
-            self.height() - self.grip.height(),
-        )
-        return super().resizeEvent(event)
-
 
 
 if __name__ == "__main__":
